@@ -139,21 +139,21 @@ switch($step)
 		//	=================================
 		
 		include_once ("./templates/s2.html");
-		exit ();
+		break;
 	
 	case '3':
-	
 			if($_GET['testdbpwd']){
 				$dbHost = $_POST['dbHost'].':'.$_POST['dbPort'];
 				$conn = @mysql_connect($dbHost, $_POST['dbUser'], $_POST['dbPwd']);
 				if($conn){die("1"); }else{die("");}
 			}
-			$scriptName = !empty ($_SERVER["REQUEST_URI"]) ?  $scriptName = $_SERVER["REQUEST_URI"] :  $scriptName = $_SERVER["PHP_SELF"];
-	        $rootpath = @preg_replace("/\/(I|i)nstall\/index\.php(.*)$/", "", $scriptName);
+			
+			$scriptName = !empty ($_SERVER["REQUEST_URI"]) ? $_SERVER["REQUEST_URI"] : $_SERVER["PHP_SELF"];
+			$rootpath = @preg_replace("/\/(I|i)nstall\/index\.php(.*)$/", "", $scriptName);
 			$domain = empty ($_SERVER['HTTP_HOST']) ?  $_SERVER['HTTP_HOST']  : $_SERVER['SERVER_NAME'] ;
 			$domain = $domain.$rootpath;
-	        include_once ("./templates/s3.html");
-	        exit ();
+			include_once ("./templates/s3.html");
+			exit ();
 	
 	case '4':
 	
