@@ -115,7 +115,7 @@ switch($step)
 			$Testdir = SITEDIR.$dir;
 			
 			//	创建需要测试的目录
-			create_dir($Testdir);
+			createDir($Testdir);
 		
 			//	测试目录是否拥有写入权限
 			if(write_dir($Testdir)){
