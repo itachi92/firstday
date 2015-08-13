@@ -1,6 +1,5 @@
 <?php include_once ('./templates/header.html'); ?>
 <script type="text/javascript">
-<!--
 	$(document).ready(function(){
 		$('#dbPwd').blur();
 		$(".table tr").each(function(){ $(this).children("td").eq(0).addClass("on");});
@@ -12,7 +11,6 @@
 	$.ajaxSetup ({ cache: false });
 	function TestDbPwd()
 	{
-
 		var dbHost = $('#dbHost').val();
 		var dbUser = $('#dbUser').val();
 		var dbPwd = $('#dbPwd').val();
@@ -24,8 +22,7 @@
 			 type: "POST",
 			 url: url,
 			 data: data,
-			 beforeSend:function(){				 
-			 },
+			 beforeSend:function(){},
 			 success: function(msg){
 				 if(msg){
 					$('#pwd_msg').html("数据库配置正确");
@@ -45,9 +42,6 @@
 			}
 		});
 	}
-	
-
--->
 </script>
 
 			<!-- 页面main:box:b1:right部分开始-->
@@ -130,7 +124,11 @@
 	        </tr>
 	        <tr>
 	            <td><strong> 描述(description)：</strong></td>
-	            <td><textarea id="seo_description" name="seo_description" rows="5" cols="60" size="30">Yourphp网站管理系统,是一款完全开源免费的PHP+MYSQL系统.核心采用了Thinkphp框架等众多开源软件,同时核心功能也作为开源软件发布</textarea></td>
+	            <td>
+	            	<textarea id="seo_description" name="seo_description" rows="5" cols="60" size="30">
+	            	Yourphp网站管理系统,是一款完全开源免费的PHP+MYSQL系统.核心采用了Thinkphp框架等众多开源软件,同时核心功能也作为开源软件发布
+	            	</textarea>
+	            </td>
 	        </tr>
 	        <tr>
 	            <td><strong>管理员邮箱：</strong></td>
