@@ -152,14 +152,13 @@ switch($step)
 			$rootpath = @preg_replace("/\/(I|i)nstall\/index\.php(.*)$/", "", $scriptName);
 			$domain = empty ($_SERVER['HTTP_HOST']) ?  $_SERVER['HTTP_HOST']  : $_SERVER['SERVER_NAME'] ;
 			$domain = $domain.$rootpath;
+			
 			include_once ("./templates/s3.html");
-			exit ();
-	
+			break;
 	case '4':
-	
 		if(intval($_GET['install'])){
 				$n = intval($_GET['n']);
-				$arr=array();
+				$info=array();
 	
 				$dbHost = trim($_POST['dbHost']);
 				$dbPort = trim($_POST['dbPort']);
@@ -177,38 +176,48 @@ switch($step)
 				$seo_description = trim($_POST['seo_description']);
 				$seo_keywords = trim($_POST['seo_keywords']);
 	
-				$conn = @ mysql_connect($dbHost, $dbUser, $dbPwd);
+				$conn = mysql_connect($dbHost, $dbUser, $dbPwd);
 				if(!$conn){
-					$arr['msg'] = "连接数据库失败!";
-					echo json_encode($arr);exit;
+					$info['msg'] = "连接数据库失败!";
+					echo json_encode($info);exit;
 				}
+				
 				mysql_query("SET NAMES 'utf8'");//,character_set_client=binary,sql_mode='';
+				
 				$version = mysql_get_server_info($conn);
+				
 				if($version < 4.1){
-					$arr['msg'] = '数据库版本太低!';
-					echo json_encode($arr);exit;
+					$info['msg'] = '数据库版本太低!';
+					echo json_encode($info);exit;
 				}
 	
+				// （1）创建数据库：导入数据前，yourphp数据库没有创建，所以会执行下面代码
 				if(!mysql_select_db($dbName, $conn)){
-					if(!mysql_query("CREATE DATABASE IF NOT EXISTS `".$dbName."`;", $conn)){
-						$arr['msg'] = '数据库 '.$dbName.' 不存在，也没权限创建新的数据库！';
-						echo json_encode($arr);exit;
+					
+					// Ⅰ.根据传入的参数dbName创建数据库
+					$query = "CREATE DATABASE IF NOT EXISTS `".$dbName."`;";
+					$res = mysql_query($query,$conn);
+					
+					if(!$res){
+						$info['msg'] = '数据库 '.$dbName.' 不存在，也没权限创建新的数据库！';
+						echo json_encode($info);exit;
+					}else {
+						$info['n']=1;
+						$info['msg'] = "成功创建数据库:{$dbName}<br>";
+						echo json_encode($info);exit;
 					}
-					if(empty($n)){
-						$arr['n']=1;
-						$arr['msg'] = "成功创建数据库:{$dbName}<br>";
-						echo json_encode($arr);exit;
-					}
+					
+					//	Ⅱ.选择数据库
 					mysql_select_db($dbName, $conn);
 				}
 	
-				//读取数据文件
+				//	（2）读取数据文件
 				$sqldata = file_get_contents(SITEDIR.'Install/'.$sqlFile);
 				$sqlFormat = sql_split($sqldata, $dbPrefix);
-	
-				/**
-				执行SQL语句
-				*/
+				
+				exit('test');
+				
+				//	（3）执行SQL语句
 				$counts =count($sqlFormat);
 	
 				for ($i=$n; $i < $counts; $i++){
@@ -224,18 +233,17 @@ switch($step)
 						}else{
 							$message =  '<font  color="red">创建数据表失败：'.$matches[1].' </font><br />';
 						}
-						$arr=array('n'=>$i,'msg'=>$message);
-						echo json_encode($arr); exit;
-	
+						$info = array('n'=>$i,'msg'=>$message);
+						echo json_encode($info); exit;
 					}else{
 						$ret = mysql_query($sql);
 						$message='';
-						$arr=array('n'=>$i,'msg'=>$message);
-						echo json_encode($arr); exit;
+						$info=array('n'=>$i,'msg'=>$message);
+						echo json_encode($info); exit;
 					}
 				}
 	
-				if($i==999999)exit;
+				if($i==999999) exit;
 	
 	
 				$sqldata =   file_get_contents(SITEDIR.'Install/yourphp_data.sql');
@@ -282,8 +290,8 @@ switch($step)
 				mysql_query($query);
 	
 				$message  = '成功添加管理员<br />成功写入配置文件<br>安装完成．';
-				$arr=array('n'=>999999,'msg'=>$message);
-				echo json_encode($arr);exit;
+				$info=array('n'=>999999,'msg'=>$message);
+				echo json_encode($info);exit;
 		}
 	
 		 include_once ("./templates/s4.html");
@@ -291,72 +299,15 @@ switch($step)
 	
 	case '5':
 		dir_delete(SITEDIR.'/Cache');
+		
 		$scriptName = !empty ($_SERVER["REQUEST_URI"]) ?  $scriptName = $_SERVER["REQUEST_URI"] :  $scriptName = $_SERVER["PHP_SELF"];
-	    $rootpath = @preg_replace("/\/(I|i)nstall\/index\.php(.*)/", "", $scriptName);
+	  $rootpath = @preg_replace("/\/(I|i)nstall\/index\.php(.*)/", "", $scriptName);
 		$domain = empty ($_SERVER['HTTP_HOST']) ?  $_SERVER['HTTP_HOST']  : $_SERVER['SERVER_NAME'] ;
 		$domain = $domain.$rootpath;
+		
 		include_once ("./templates/s5.html");
 		@touch('../install.lock');
 	    exit ();
-}
-
-//	===============测试函数====================
-function step2(){
-	$phpv = @ phpversion();
-	//	$os = PHP_OS;
-	$os = php_uname();
-	$tmp = function_exists('gd_info') ? gd_info() : array();
-	
-	$server = $_SERVER["SERVER_SOFTWARE"];
-	$host = (empty ($_SERVER["SERVER_ADDR"]) ? $_SERVER["SERVER_HOST"] : $_SERVER["SERVER_ADDR"]);
-	$name = $_SERVER["SERVER_NAME"];
-	$max_execution_time = ini_get('max_execution_time');
-	$allow_reference = (ini_get('allow_call_time_pass_reference') ? '<font color=green>[√]On</font>' : '<font color=red>[×]Off</font>');
-	$allow_url_fopen = (ini_get('allow_url_fopen') ? '<font color=green>[√]On</font>' : '<font color=red>[×]Off</font>');
-	$safe_mode = (ini_get('safe_mode') ? '<font color=red>[×]On</font>' : '<font color=green>[√]Off</font>');
-	
-	$err=0;
-	
-	if(empty($tmp['GD Version'])){
-		$gd =  '<font color=red>[×]Off</font>' ;
-		$err++;
-	}else{
-		$gd =  '<font color=green>[√]On</font> '.$tmp['GD Version'];
-	}
-	
-	if(function_exists('mysql_connect')){
-		$mysql = '<font color=green>[√]On</font>';
-	}else{
-		$mysql = '<font color=red>[×]Off</font>';
-		$err++;
-	}
-	
-	if(ini_get('file_uploads')){
-		$uploadSize = '<font color=green>[√]On</font> 文件限制:'.ini_get('upload_max_filesize');
-	}else{
-		$uploadSize = '禁止上传';
-	}
-	if(function_exists('session_start')){
-		$session = '<font color=green>[√]On</font>' ;
-	}else{
-		$session = '<font color=red>[×]Off</font>';
-		$err++;
-	}
-	
-	$folder = array (
-			'/',
-			'Uploads',
-			'Public/Data',
-			'Cache/Html',
-			'Cache',
-			'Cache/Cache',
-			'Cache/Data',
-			'Cache/Temp',
-			'Cache/Logs'
-	);
-	
-	include_once ("./templates/s2.html");
-	exit ();
 }
 
 ?>

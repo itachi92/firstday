@@ -45,7 +45,6 @@ function sql_execute($sql,$tablepre) {
 }
 
 function  sql_split($sql,$tablepre) {
-
 	if($tablepre != "yourphp_") $sql = str_replace("yourphp_", $tablepre, $sql);
 	$sql = preg_replace("/TYPE=(InnoDB|MyISAM|MEMORY)( DEFAULT CHARSET=[^; ]+)?/", "ENGINE=\\1 DEFAULT CHARSET=utf8",$sql);
 
@@ -161,3 +160,30 @@ function createDir($dirs,$mode=0777)
 
 	return false;
 }
+
+/**
+ * 自定义测试函数
+ * @param string $var
+ * @param string $exit  
+ * */
+function Dcup($var = NULL,$exit = FALSE){
+	header("Content-type:text/html;charset=utf-8");
+	
+	if (empty($var)) {
+		echo 'null';
+	}else {
+		// int string float...
+		echo '<pre>';
+		var_dump($var);
+		echo '</pre>';
+		
+		if ($exit) exit();
+	}
+}
+
+
+
+
+
+
+
