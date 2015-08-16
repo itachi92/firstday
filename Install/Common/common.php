@@ -37,8 +37,7 @@ function sql_execute($sql,$tablepre) {
 			}
 		}
 	}
-	else
-	{
+	else{
 		mysql_query($sqls);
 	}
 	return true;

@@ -253,6 +253,7 @@ switch($step)
 				sql_execute($sqldata, $dbPrefix);
 		 
 	
+				//	站点多语言设置
 				if( $_POST['lang']){
 					$langsql = file_get_contents(SITEDIR.'Install/yourphp_lang.sql');
 					sql_execute($langsql, $dbPrefix);
@@ -269,7 +270,7 @@ switch($step)
 				mysql_query("UPDATE `{$dbPrefix}config` SET  `value` = '$seo_keywords' WHERE varname='seo_keywords'  and lang=1");	
 	 
 	
-				//读取配置文件，并替换真实配置数据
+				//	读取配置文件，并替换真实配置数据
 				$strConfig = file_get_contents(SITEDIR.'Install/'.$configFile);
 				$strConfig = str_replace('#DB_HOST#', $dbHost, $strConfig);
 				$strConfig = str_replace('#DB_NAME#', $dbName, $strConfig);
@@ -277,12 +278,13 @@ switch($step)
 				$strConfig = str_replace('#DB_PWD#', $dbPwd, $strConfig);
 				$strConfig = str_replace('#DB_PORT#', $dbPort, $strConfig);
 				$strConfig = str_replace('#DB_PREFIX#', $dbPrefix, $strConfig);
-				@file_put_contents(SITEDIR.'/'.$configFile, $strConfig);
+				@file_put_contents(SITEDIR.'/'.$configFile, $strConfig);//	在站点根目录生成配置文件
+				
 				$code=md5(time());
-				$query = "UPDATE `{$dbPrefix}config` SET value='$code' WHERE varname='ADMIN_ACCESS'";
+				$query = "UPDATE `{$dbPrefix}config` SET value='$code' WHERE varname='ADMIN_ACCESS'";//	管理员访问控制标志
 				mysql_query($query);
 	 
-	 			//插入管理员
+	 			//	插入管理员
 				$time=time();
 				$ip = get_client_ip();
 				$password = hash ( sha1, $password.$code );
