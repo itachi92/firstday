@@ -278,6 +278,7 @@ switch($step)
 				$strConfig = str_replace('#DB_PWD#', $dbPwd, $strConfig);
 				$strConfig = str_replace('#DB_PORT#', $dbPort, $strConfig);
 				$strConfig = str_replace('#DB_PREFIX#', $dbPrefix, $strConfig);
+				
 				@file_put_contents(SITEDIR.'/'.$configFile, $strConfig);//	在站点根目录生成配置文件
 				
 				$code=md5(time());
@@ -297,7 +298,7 @@ switch($step)
 		}
 	
 		 include_once ("./templates/s4.html");
-		 exit();
+		 break;
 	
 	case '5':
 		dir_delete(SITEDIR.'/Cache');

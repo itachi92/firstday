@@ -25,6 +25,16 @@ function write_dir( $d )
 	return false;
 }
 
+function dir_delete($dir) {
+	$dir = dir_path($dir);
+	if (!is_dir($dir)) return FALSE;
+	$list = glob($dir.'*');
+	foreach((array)$list as $v) {
+		is_dir($v) ? dir_delete($v) : @unlink($v);
+	}
+	return @rmdir($dir);
+}
+
 function sql_execute($sql,$tablepre) {
 	$sqls = sql_split($sql,$tablepre);
 	if(is_array($sqls))
