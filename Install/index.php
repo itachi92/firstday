@@ -215,7 +215,7 @@ switch($step)
 				$sqldata = file_get_contents(SITEDIR.'Install/'.$sqlFile);
 				$sqlFormat = sql_split($sqldata, $dbPrefix);
 				
-				exit('test');
+				// exit('test');
 				
 				//	（3）执行SQL语句
 				$counts =count($sqlFormat);
@@ -301,7 +301,7 @@ switch($step)
 		 break;
 	
 	case '5':
-		dir_delete(SITEDIR.'/Cache');
+		delete_dir(SITEDIR.'/Cache');
 		
 		$scriptName = !empty ($_SERVER["REQUEST_URI"]) ?  $scriptName = $_SERVER["REQUEST_URI"] :  $scriptName = $_SERVER["PHP_SELF"];
 	  $rootpath = @preg_replace("/\/(I|i)nstall\/index\.php(.*)/", "", $scriptName);

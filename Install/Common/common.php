@@ -25,12 +25,12 @@ function write_dir( $d )
 	return false;
 }
 
-function dir_delete($dir) {
-	$dir = dir_path($dir);
+function delete_dir($dir) {
+	$dir = get_dir_path($dir);
 	if (!is_dir($dir)) return FALSE;
 	$list = glob($dir.'*');
 	foreach((array)$list as $v) {
-		is_dir($v) ? dir_delete($v) : @unlink($v);
+		is_dir($v) ? delete_dir($v) : @unlink($v);
 	}
 	return @rmdir($dir);
 }
